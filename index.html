@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⚠️ 重要通知 - 请立即查看</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: #0a0a1a;
+        }
+
+        /* ========== Floating Hearts Background ========== */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heart-float {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0;
+            animation: floatUp 6s ease-in infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(0deg) scale(0.5);
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-10vh) rotate(720deg) scale(1.2);
+            }
+        }
+
+        /* ========== Page Sections ========== */
+        .page {
+            display: none;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        /* ========== Page 1: Fake Warning ========== */
+        .page-1 {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        }
+
+        .warning-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 30px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            animation: cardAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .warning-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .warning-title {
+            color: #ff6b6b;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .warning-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .warning-text .highlight {
+            color: #ffd93d;
+            font-weight: 500;
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 14px 48px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans SC', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-check::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            to { left: 100%; }
+        }
+
+        .btn-check:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(238, 90, 36, 0.4);
+        }
+
+        .btn-check:active {
+            transform: translateY(0);
+        }
+
+        /* ========== Page 2: Loading ========== */
+        .page-2 {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            flex-direction: column;
+        }
+
+        .loading-container {
+            text-align: center;
+        }
+
+        .loading-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            margin-bottom: 30px;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .loading-bar-container {
+            width: 280px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto 20px;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #ff6b6b);
+            background-size: 200% 100%;
+            border-radius: 3px;
+            animation: loadProgress 2.5s ease-in-out forwards, gradientMove 1s linear infinite;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            30% { width: 40%; }
+            60% { width: 70%; }
+            80% { width: 85%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes gradientMove {
+            to { background-position: -200% 0; }
+        }
+
+        .loading-items {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+        }
+
+        .loading-item {
+            opacity: 0;
+            animation: fadeInItem 0.5s ease forwards;
+        }
+
+        /* ========== Page 3: Question ========== */
+        .page-3 {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fdfcfb 100%);
+        }
+
+        .question-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 44px 32px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            animation: cardAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .question-emoji {
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .question-title {
+            color: #333;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .question-sub {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 36px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            position: relative;
+            min-height: 60px;
+        }
+
+        .btn-like {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans SC', sans-serif;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-like:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5);
+        }
+
+        .btn-dislike {
+            background: rgba(0, 0, 0, 0.05);
+            color: #aaa;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: 'Noto Sans SC', sans-serif;
+            position: relative;
+            user-select: none;
+        }
+
+        /* ========== Page 4: Love Result ========== */
+        .page-4 {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fdfcfb 100%);
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 44px 32px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            animation: cardAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .result-heart {
+            font-size: 80px;
+            margin-bottom: 16px;
+            animation: heartBeat 1s ease-in-out infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+            60% { transform: scale(1); }
+        }
+
+        .result-title {
+            font-size: 26px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24, #ff6b6b);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientText 3s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes gradientText {
+            to { background-position: 200% center; }
+        }
+
+        .result-message {
+            color: #666;
+            font-size: 15px;
+            line-height: 2;
+            margin-bottom: 10px;
+        }
+
+        .result-message p {
+            margin-bottom: 8px;
+        }
+
+        .result-date {
+            color: #ccc;
+            font-size: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .result-footer {
+            color: #ff8e8e;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 12px;
+        }
+
+        /* ========== Fireworks ========== */
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .firework-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: fireworkExplode 1.5s ease-out forwards;
+        }
+
+        @keyframes fireworkExplode {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        /* ========== Confetti ========== */
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 3;
+            animation: confettiFall linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotateZ(0deg) rotateX(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotateZ(720deg) rotateX(360deg);
+            }
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 400px) {
+            .warning-card, .question-card, .result-card {
+                padding: 32px 24px;
+                margin: 10px;
+            }
+            .question-title {
+                font-size: 20px;
+            }
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Hearts Background -->
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <!-- Page 1: Fake Warning -->
+    <div class="page page-1 active" id="page1">
+        <div class="warning-card">
+            <div class="warning-icon">⚠️</div>
+            <div class="warning-title">系统安全通知</div>
+            <div class="warning-text">
+                检测到您的微信账号存在<span class="highlight">异常行为</span>，
+                系统已记录到您近期<span class="highlight">频繁偷看某人朋友圈</span>的操作。
+                <br><br>
+                为保障账号安全，请立即进行身份验证。
+            </div>
+            <button class="btn-check" onclick="goToPage2()">立即验证 →</button>
+        </div>
+    </div>
+
+    <!-- Page 2: Fake Loading -->
+    <div class="page page-2" id="page2">
+        <div class="loading-container">
+            <div class="loading-text">🔍 正在扫描您的心动记录...</div>
+            <div class="loading-bar-container">
+                <div class="loading-bar" id="loadingBar"></div>
+            </div>
+            <div class="loading-items" id="loadingItems"></div>
+        </div>
+    </div>
+
+    <!-- Page 3: The Question -->
+    <div class="page page-3" id="page3">
+        <div class="question-card">
+            <div class="question-emoji">🥺</div>
+            <div class="question-title">检测结果出来了</div>
+            <div class="question-sub">回答以下问题即可解除异常</div>
+            <p style="color: #555; font-size: 18px; font-weight: 600; margin-bottom: 28px;">
+                你喜不喜欢发你链接的那个人？
+            </p>
+            <div class="btn-group">
+                <button class="btn-like" onclick="goToPage4()">超喜欢！💕</button>
+                <button class="btn-dislike" id="btnDislike" 
+                    onmouseover="runAway(this)" 
+                    ontouchstart="runAway(this)">不喜欢</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 4: Love Result -->
+    <div class="page page-4" id="page4">
+        <div class="fireworks" id="fireworks"></div>
+        <div class="result-card">
+            <div class="result-heart">💗</div>
+            <div class="result-title">哈哈 被套路了吧～</div>
+            <div class="result-message">
+                <p>其实没有什么异常啦 🤭</p>
+                <p>就是想告诉你</p>
+                <p>你是我<strong style="color:#ff6b6b">最特别</strong>的人 ✨</p>
+                <p>每天想你 想你 还是想你</p>
+                <p>今天也超级超级喜欢你哦～</p>
+            </div>
+            <div class="result-date" id="resultDate"></div>
+            <div class="result-footer">—— 来自偷偷喜欢你的人 💌</div>
+        </div>
+    </div>
+
+    <script>
+        // ========== Page Navigation ==========
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function goToPage2() {
+            showPage('page2');
+            
+            const items = [
+                '📱 正在读取聊天记录...',
+                '💬 正在分析表情包使用频率...',
+                '👀 正在统计朋友圈访问次数...',
+                '💕 正在计算心动指数...',
+                '✅ 分析完成！',
+            ];
+
+            const container = document.getElementById('loadingItems');
+            
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'loading-item';
+                    div.textContent = item;
+                    div.style.animationDelay = '0s';
+                    container.appendChild(div);
+                    
+                    // Auto scroll
+                    container.scrollTop = container.scrollHeight;
+                }, index * 500 + 300);
+            });
+
+            // Go to page 3 after loading
+            setTimeout(() => {
+                showPage('page3');
+                startHearts();
+            }, 3000);
+        }
+
+        // ========== Run Away Button ==========
+        let runCount = 0;
+        const funnyTexts = ['别点我！', '抓不到～', '不许选这个！', '再试试？', '哼！', '就不让你点', '死心吧～', '选左边！'];
+
+        function runAway(btn) {
+            runCount++;
+            const card = btn.closest('.question-card');
+            const cardRect = card.getBoundingClientRect();
+            
+            // Random position within the card area
+            const maxX = cardRect.width - btn.offsetWidth - 40;
+            const maxY = cardRect.height - btn.offsetHeight - 20;
+            
+            const randomX = Math.random() * maxX - maxX / 2;
+            const randomY = Math.random() * maxY - maxY / 2;
+            
+            btn.style.position = 'absolute';
+            btn.style.left = `calc(50% + ${randomX}px)`;
+            btn.style.top = `calc(50% + ${randomY}px)`;
+            btn.style.transform = 'translate(-50%, -50%)';
+            btn.style.zIndex = '10';
+            
+            // Change text
+            btn.textContent = funnyTexts[runCount % funnyTexts.length];
+
+            // After many attempts, make button tiny
+            if (runCount > 5) {
+                btn.style.fontSize = Math.max(8, 16 - runCount) + 'px';
+                btn.style.padding = `${Math.max(4, 14 - runCount)}px ${Math.max(10, 36 - runCount * 2)}px`;
+            }
+            if (runCount > 10) {
+                btn.style.opacity = Math.max(0.1, 1 - runCount * 0.08);
+            }
+        }
+
+        // ========== Page 4: Result ==========
+        function goToPage4() {
+            showPage('page4');
+            
+            // Show date
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+            document.getElementById('resultDate').textContent = `💌 ${dateStr}`;
+            
+            // Trigger effects
+            createConfetti();
+            createFireworks();
+            startHearts();
+        }
+
+        // ========== Hearts Background ==========
+        function startHearts() {
+            const bg = document.getElementById('heartsBg');
+            const hearts = ['❤️', '💕', '💗', '💖', '💘', '💝', '🌸', '✨', '💫'];
+            
+            setInterval(() => {
+                const heart = document.createElement('span');
+                heart.className = 'heart-float';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 20 + 14) + 'px';
+                heart.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                bg.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 10000);
+            }, 300);
+        }
+
+        // ========== Confetti ==========
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff8e8e', '#ffc0cb', '#dda0dd'];
+            
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const piece = document.createElement('div');
+                    piece.className = 'confetti-piece';
+                    piece.style.left = Math.random() * 100 + '%';
+                    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    piece.style.width = (Math.random() * 8 + 4) + 'px';
+                    piece.style.height = (Math.random() * 8 + 4) + 'px';
+                    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                    piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    piece.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(piece);
+                    
+                    setTimeout(() => piece.remove(), 5000);
+                }, i * 50);
+            }
+        }
+
+        // ========== Fireworks ==========
+        function createFireworks() {
+            const container = document.getElementById('fireworks');
+            const colors = ['#ff6b6b', '#ffd93d', '#ff8e8e', '#ffc0cb', '#ff69b4'];
+            
+            function burst(x, y) {
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'firework-particle';
+                    particle.style.left = x + 'px';
+                    particle.style.top = y + 'px';
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    const angle = (Math.PI * 2 * i) / 20;
+                    const distance = Math.random() * 120 + 60;
+                    particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                    particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                    
+                    container.appendChild(particle);
+                    setTimeout(() => particle.remove(), 1500);
+                }
+            }
+
+            // Multiple bursts
+            const positions = [
+                [window.innerWidth * 0.3, window.innerHeight * 0.3],
+                [window.innerWidth * 0.7, window.innerHeight * 0.2],
+                [window.innerWidth * 0.5, window.innerHeight * 0.4],
+                [window.innerWidth * 0.2, window.innerHeight * 0.5],
+                [window.innerWidth * 0.8, window.innerHeight * 0.45],
+            ];
+
+            positions.forEach(([x, y], i) => {
+                setTimeout(() => burst(x, y), i * 400);
+            });
+
+            // Repeat fireworks
+            setTimeout(() => createFireworks(), 4000);
+        }
+    </script>
+</body>
+</html>
