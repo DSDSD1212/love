@@ -1,25 +1,71 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>⚠️ 重要通知 - 请立即查看</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
     <style>
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #ff8e8e;
+            --accent: #ffd93d;
+            --bg-dark: #0a0a1a;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'Noto Sans SC', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
-            background: #0a0a1a;
+            background: var(--bg-dark);
+            color: var(--text-main);
         }
 
-        /* ========== Floating Hearts Background ========== */
+        /* ========== Animated Background ========== */
+        .main-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1a1a3a 0%, #0a0a1a 100%);
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.1) 0%, transparent 70%);
+            filter: blur(50px);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: moveGlow 15s infinite alternate;
+        }
+
+        @keyframes moveGlow {
+            0% {
+                transform: translate(-10%, -10%);
+            }
+
+            100% {
+                transform: translate(110%, 110%);
+            }
+        }
+
         .hearts-bg {
             position: fixed;
             top: 0;
@@ -33,7 +79,6 @@
 
         .heart-float {
             position: absolute;
-            font-size: 20px;
             opacity: 0;
             animation: floatUp 6s ease-in infinite;
         }
@@ -43,25 +88,28 @@
                 opacity: 0;
                 transform: translateY(100vh) rotate(0deg) scale(0.5);
             }
+
             10% {
                 opacity: 0.6;
             }
+
             90% {
                 opacity: 0.3;
             }
+
             100% {
                 opacity: 0;
                 transform: translateY(-10vh) rotate(720deg) scale(1.2);
             }
         }
 
-        /* ========== Page Sections ========== */
+        /* ========== Content Layout ========== */
         .page {
             display: none;
             min-height: 100vh;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 24px;
             position: relative;
             z-index: 1;
         }
@@ -70,335 +118,216 @@
             display: flex;
         }
 
-        /* ========== Page 1: Fake Warning ========== */
-        .page-1 {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-        }
-
-        .warning-card {
-            background: rgba(255, 255, 255, 0.05);
+        /* Glassmorphism Classes */
+        .glass-card {
+            background: var(--glass-bg);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 40px 30px;
-            max-width: 380px;
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 40px 32px;
             width: 100%;
+            max-width: 420px;
             text-align: center;
-            animation: cardAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: cardIn 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes cardAppear {
+        @keyframes cardIn {
             from {
                 opacity: 0;
-                transform: translateY(30px) scale(0.9);
+                transform: translateY(40px) scale(0.95);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
             }
         }
 
-        .warning-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .warning-title {
-            color: #ff6b6b;
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .warning-text {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            line-height: 1.8;
-            margin-bottom: 30px;
-        }
-
-        .warning-text .highlight {
-            color: #ffd93d;
-            font-weight: 500;
-        }
-
-        .btn-check {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            color: white;
-            border: none;
-            padding: 14px 48px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Noto Sans SC', sans-serif;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-check::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            to { left: 100%; }
-        }
-
-        .btn-check:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(238, 90, 36, 0.4);
-        }
-
-        .btn-check:active {
-            transform: translateY(0);
-        }
-
-        /* ========== Page 2: Loading ========== */
-        .page-2 {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            flex-direction: column;
-        }
-
-        .loading-container {
-            text-align: center;
-        }
-
-        .loading-text {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 16px;
-            margin-bottom: 30px;
-            animation: blink 1.5s ease-in-out infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .loading-bar-container {
-            width: 280px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 0 auto 20px;
-        }
-
-        .loading-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #ff6b6b);
-            background-size: 200% 100%;
-            border-radius: 3px;
-            animation: loadProgress 2.5s ease-in-out forwards, gradientMove 1s linear infinite;
-        }
-
-        @keyframes loadProgress {
-            0% { width: 0%; }
-            30% { width: 40%; }
-            60% { width: 70%; }
-            80% { width: 85%; }
-            100% { width: 100%; }
-        }
-
-        @keyframes gradientMove {
-            to { background-position: -200% 0; }
-        }
-
-        .loading-items {
-            color: rgba(255, 255, 255, 0.5);
+        /* ========== Page 1: System Info ========== */
+        .info-tag {
+            display: inline-block;
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 20px;
             font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
         }
 
-        .loading-item {
-            opacity: 0;
-            animation: fadeInItem 0.5s ease forwards;
-        }
-
-        /* ========== Page 3: Question ========== */
-        .page-3 {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fdfcfb 100%);
-        }
-
-        .question-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
-            padding: 44px 32px;
-            max-width: 380px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            animation: cardAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .question-emoji {
-            font-size: 72px;
-            margin-bottom: 20px;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .question-title {
-            color: #333;
+        .title-red {
+            color: var(--primary);
             font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
         }
 
-        .question-sub {
-            color: #999;
-            font-size: 13px;
-            margin-bottom: 36px;
+        .desc-text {
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 15px;
+            margin-bottom: 32px;
         }
 
-        .btn-group {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            position: relative;
-            min-height: 60px;
+        .highlight-gold {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 4px;
         }
 
-        .btn-like {
-            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        /* ========== Buttons ========== */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #ee5a24);
             color: white;
             border: none;
-            padding: 14px 36px;
+            padding: 16px 40px;
             border-radius: 50px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Noto Sans SC', sans-serif;
-            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-        }
-
-        .btn-like:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5);
-        }
-
-        .btn-dislike {
-            background: rgba(0, 0, 0, 0.05);
-            color: #aaa;
-            border: 2px solid rgba(0, 0, 0, 0.08);
-            padding: 14px 36px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-family: 'Noto Sans SC', sans-serif;
+            width: 100%;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(238, 90, 36, 0.3);
             position: relative;
-            user-select: none;
-        }
-
-        /* ========== Page 4: Love Result ========== */
-        .page-4 {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fdfcfb 100%);
-            flex-direction: column;
             overflow: hidden;
         }
 
-        .result-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
-            padding: 44px 32px;
-            max-width: 380px;
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        /* ========== Page 2: Advanced Loading ========== */
+        .scan-line {
             width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-            animation: cardAppear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            z-index: 2;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            position: absolute;
+            left: 0;
+            top: 0;
+            animation: scan 2s linear infinite;
         }
 
-        .result-heart {
-            font-size: 80px;
-            margin-bottom: 16px;
-            animation: heartBeat 1s ease-in-out infinite;
+        @keyframes scan {
+            0% {
+                top: 0;
+            }
+
+            100% {
+                top: 100%;
+            }
         }
 
-        @keyframes heartBeat {
-            0%, 100% { transform: scale(1); }
-            15% { transform: scale(1.15); }
-            30% { transform: scale(1); }
-            45% { transform: scale(1.1); }
-            60% { transform: scale(1); }
+        .loading-step-list {
+            text-align: left;
+            margin-top: 24px;
         }
 
-        .result-title {
-            font-size: 26px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24, #ff6b6b);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientText 3s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes gradientText {
-            to { background-position: 200% center; }
-        }
-
-        .result-message {
-            color: #666;
-            font-size: 15px;
-            line-height: 2;
-            margin-bottom: 10px;
-        }
-
-        .result-message p {
-            margin-bottom: 8px;
-        }
-
-        .result-date {
-            color: #ccc;
-            font-size: 12px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0,0,0,0.06);
-        }
-
-        .result-footer {
-            color: #ff8e8e;
+        .loading-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            opacity: 0;
+            transform: translateX(-10px);
             font-size: 13px;
-            font-weight: 500;
-            margin-top: 12px;
+            color: var(--text-muted);
         }
 
-        /* ========== Fireworks ========== */
-        .fireworks {
+        .loading-step.done {
+            opacity: 1;
+            transform: translateX(0);
+            transition: all 0.5s ease;
+        }
+
+        .loading-step.done i {
+            color: #4cd137;
+        }
+
+        /* ========== Page 3: Memory Wall (NEW) ========== */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .memory-item {
+            aspect-ratio: 1;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .memory-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .memory-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .memory-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 8px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+            font-size: 11px;
+            color: white;
+            text-align: center;
+        }
+
+        /* ========== Page 4: Quiz (NEW) ========== */
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 16px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* ========== Final Result ========== */
+        .big-heart {
+            font-size: 80px;
+            filter: drop-shadow(0 0 20px var(--primary));
+            animation: beat 1s infinite alternate cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes beat {
+            to {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Particle Overlay */
+        #particles-js {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 2;
             pointer-events: none;
-            z-index: 1;
         }
 
         .firework-particle {
@@ -406,294 +335,247 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            animation: fireworkExplode 1.5s ease-out forwards;
+            animation: explode 1.2s ease-out forwards;
         }
 
-        @keyframes fireworkExplode {
+        @keyframes explode {
             0% {
-                opacity: 1;
                 transform: translate(0, 0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(0);
-            }
-        }
-
-        /* ========== Confetti ========== */
-        .confetti-piece {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            top: -10px;
-            z-index: 3;
-            animation: confettiFall linear forwards;
-        }
-
-        @keyframes confettiFall {
-            0% {
                 opacity: 1;
-                transform: translateY(0) rotateZ(0deg) rotateX(0deg);
             }
+
             100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
                 opacity: 0;
-                transform: translateY(100vh) rotateZ(720deg) rotateX(360deg);
             }
         }
 
-        /* ========== Responsive ========== */
-        @media (max-width: 400px) {
-            .warning-card, .question-card, .result-card {
+        /* Responsive */
+        @media (max-width: 480px) {
+            .glass-card {
                 padding: 32px 24px;
-                margin: 10px;
             }
-            .question-title {
+
+            .title-red {
                 font-size: 20px;
-            }
-            .btn-group {
-                flex-direction: column;
-                align-items: center;
             }
         }
     </style>
 </head>
+
 <body>
 
-    <!-- Floating Hearts Background -->
+    <div class="main-bg">
+        <div class="bg-glow"></div>
+    </div>
+
     <div class="hearts-bg" id="heartsBg"></div>
+    <div id="fireworks-container"></div>
 
-    <!-- Page 1: Fake Warning -->
-    <div class="page page-1 active" id="page1">
-        <div class="warning-card">
-            <div class="warning-icon">⚠️</div>
-            <div class="warning-title">系统安全通知</div>
-            <div class="warning-text">
-                检测到您的微信账号存在<span class="highlight">异常行为</span>，
-                系统已记录到您近期<span class="highlight">频繁偷看某人朋友圈</span>的操作。
+    <!-- Page 1: Initial Hook -->
+    <div class="page active" id="page1">
+        <div class="glass-card">
+            <div class="info-tag">🔒 安全验证</div>
+            <div class="title-red">WeChat 风险提示</div>
+            <p class="desc-text">
+                检测到您当前环境存在<span class="highlight-gold">身份验证缺失</span>。
                 <br><br>
-                为保障账号安全，请立即进行身份验证。
-            </div>
-            <button class="btn-check" onclick="goToPage2()">立即验证 →</button>
-        </div>
-    </div>
-
-    <!-- Page 2: Fake Loading -->
-    <div class="page page-2" id="page2">
-        <div class="loading-container">
-            <div class="loading-text">🔍 正在扫描您的心动记录...</div>
-            <div class="loading-bar-container">
-                <div class="loading-bar" id="loadingBar"></div>
-            </div>
-            <div class="loading-items" id="loadingItems"></div>
-        </div>
-    </div>
-
-    <!-- Page 3: The Question -->
-    <div class="page page-3" id="page3">
-        <div class="question-card">
-            <div class="question-emoji">🥺</div>
-            <div class="question-title">检测结果出来了</div>
-            <div class="question-sub">回答以下问题即可解除异常</div>
-            <p style="color: #555; font-size: 18px; font-weight: 600; margin-bottom: 28px;">
-                你喜不喜欢发你链接的那个人？
+                系统通过AI大数据分析发现，您在查看某人动态时由于<span class="highlight-gold">心率过快</span>触发了防沉迷机制，请配合验证。
             </p>
-            <div class="btn-group">
-                <button class="btn-like" onclick="goToPage4()">超喜欢！💕</button>
-                <button class="btn-dislike" id="btnDislike" 
-                    onmouseover="runAway(this)" 
-                    ontouchstart="runAway(this)">不喜欢</button>
+            <button class="btn-primary" onclick="goToPage2()">开始验证身份 →</button>
+        </div>
+    </div>
+
+    <!-- Page 2: Multi-step Loading -->
+    <div class="page" id="page2">
+        <div class="glass-card">
+            <div class="scan-line"></div>
+            <div class="title-red" id="loadingTitle">正在进行深度扫描...</div>
+            <div class="loading-step-list" id="loadingList">
+                <!-- Steps injected by JS -->
+            </div>
+            <div style="margin-top: 30px; opacity: 0.5; font-size: 11px;">
+                安全级别: L3 · 正在调用深度学习情感引擎
             </div>
         </div>
     </div>
 
-    <!-- Page 4: Love Result -->
-    <div class="page page-4" id="page4">
-        <div class="fireworks" id="fireworks"></div>
-        <div class="result-card">
-            <div class="result-heart">💗</div>
-            <div class="result-title">哈哈 被套路了吧～</div>
-            <div class="result-message">
-                <p>其实没有什么异常啦 🤭</p>
-                <p>就是想告诉你</p>
-                <p>你是我<strong style="color:#ff6b6b">最特别</strong>的人 ✨</p>
-                <p>每天想你 想你 还是想你</p>
-                <p>今天也超级超级喜欢你哦～</p>
+    <!-- Page 3: Memory Wall -->
+    <div class="page" id="page3">
+        <div class="glass-card" style="max-width: 460px;">
+            <div class="info-tag">📸 缓存数据恢复</div>
+            <div class="title-red">关联记忆已找回</div>
+            <p class="desc-text" style="margin-bottom: 20px;">
+                您在本地缓存中留下了大量与此人的关联。
+            </p>
+            <div class="memory-grid">
+                <div class="memory-item">
+                    <img src="/home/sds/.gemini/antigravity/brain/6c9a289c-40f6-4839-92e0-cde073d9d2c5/cute_love_candies_1772443765380.png"
+                        alt="记忆1">
+                    <div class="memory-caption">甜甜的心动</div>
+                </div>
+                <div class="memory-item">
+                    <img src="/home/sds/.gemini/antigravity/brain/6c9a289c-40f6-4839-92e0-cde073d9d2c5/aesthetic_flower_garden_pink_1772443785699.png"
+                        alt="记忆2">
+                    <div class="memory-caption">想带你散步</div>
+                </div>
+                <!-- 预留失败占位 -->
+                <div class="memory-item"
+                    style="background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 24px;">✨</span>
+                    <div class="memory-caption">未完待续</div>
+                </div>
+                <div class="memory-item"
+                    style="background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 24px;">🌙</span>
+                    <div class="memory-caption">全是你</div>
+                </div>
             </div>
-            <div class="result-date" id="resultDate"></div>
-            <div class="result-footer">—— 来自偷偷喜欢你的人 💌</div>
+            <button class="btn-primary" style="margin-top: 24px;" onclick="goToPage4()">下一步：确认情感逻辑</button>
+        </div>
+    </div>
+
+    <!-- Page 4: Interaction Question -->
+    <div class="page" id="page4">
+        <div class="glass-card">
+            <div class="info-tag">🙋 逻辑校验</div>
+            <div class="title-red">最后一个问题</div>
+            <p class="desc-text">
+                为了确定您的账号归属，请回答：<br>
+                <strong style="color: white; font-size: 18px;">你喜不喜欢给你发链接的那个人？</strong>
+            </p>
+            <div style="position: relative; min-height: 200px;">
+                <button class="btn-primary" onclick="winLove()">超级喜欢！💕</button>
+                <button class="btn-primary" id="btnRun"
+                    style="background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: #aaa; margin-top: 16px;"
+                    onmouseover="dodge(this)" ontouchstart="dodge(this)">不喜欢</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 5: Success Final -->
+    <div class="page" id="page5">
+        <div class="glass-card" style="border-color: var(--primary);">
+            <div class="big-heart">💗</div>
+            <div class="title-red" style="margin-top: 24px;">被套路了吧！哈哈</div>
+            <div class="desc-text" style="color: var(--text-main);">
+                其实没有什么系统风险啦。<br>
+                就是想找个借口告诉你：<br>
+                <span
+                    style="font-size: 20px; font-weight: 900; background: linear-gradient(90deg, #ff6b6b, #ffd93d); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">我超级超级超级喜欢你！</span>
+                <br><br>
+                你是我的 <strong style="color: var(--accent);">First Priority</strong>。<br>
+                想余生都和你一起这样快乐～
+            </div>
+            <div
+                style="font-size: 12px; border-top: 1px solid var(--glass-border); padding-top: 20px; margin-top: 10px; opacity: 0.5;">
+                💌 告白日期：<span id="dateNow"></span>
+            </div>
         </div>
     </div>
 
     <script>
-        // ========== Page Navigation ==========
-        function showPage(id) {
+        // NAVIGATION
+        function show(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
+        // PAGE 2: LOADING SCRIPT
         function goToPage2() {
-            showPage('page2');
-            
-            const items = [
-                '📱 正在读取聊天记录...',
-                '💬 正在分析表情包使用频率...',
-                '👀 正在统计朋友圈访问次数...',
-                '💕 正在计算心动指数...',
-                '✅ 分析完成！',
+            show('page2');
+            const steps = [
+                '📡 正在建立加密信道...',
+                '📊 获取朋友圈最近访问频率...',
+                '💓 检测到心跳异常峰值(120+)...',
+                '📂 正在匹配历史交互数据...',
+                '🔮 情感波段分析完成...',
+                '✅ 结果已生成，准备解密...'
             ];
-
-            const container = document.getElementById('loadingItems');
-            
-            items.forEach((item, index) => {
+            const list = document.getElementById('loadingList');
+            steps.forEach((s, i) => {
                 setTimeout(() => {
                     const div = document.createElement('div');
-                    div.className = 'loading-item';
-                    div.textContent = item;
-                    div.style.animationDelay = '0s';
-                    container.appendChild(div);
-                    
-                    // Auto scroll
-                    container.scrollTop = container.scrollHeight;
-                }, index * 500 + 300);
+                    div.className = 'loading-step done';
+                    div.innerHTML = `<span>✔</span> ${s}`;
+                    list.appendChild(div);
+                }, i * 600);
             });
 
-            // Go to page 3 after loading
-            setTimeout(() => {
-                showPage('page3');
-                startHearts();
-            }, 3000);
+            setTimeout(() => { show('page3'); startHearts(); }, steps.length * 600 + 800);
         }
 
-        // ========== Run Away Button ==========
-        let runCount = 0;
-        const funnyTexts = ['别点我！', '抓不到～', '不许选这个！', '再试试？', '哼！', '就不让你点', '死心吧～', '选左边！'];
+        // PAGE 4: DODGE BUTTON
+        let dodgeCount = 0;
+        const funnyWords = ['别点这个！', '点不动吧？', '左边更好看', '死心吧', '我是会逃跑的', '哼', '不让你点'];
+        function dodge(btn) {
+            dodgeCount++;
+            const maxX = window.innerWidth - btn.offsetWidth - 40;
+            const maxY = window.innerHeight - btn.offsetHeight - 40;
+            const rx = Math.random() * maxX;
+            const ry = Math.random() * maxY;
 
-        function runAway(btn) {
-            runCount++;
-            const card = btn.closest('.question-card');
-            const cardRect = card.getBoundingClientRect();
-            
-            // Random position within the card area
-            const maxX = cardRect.width - btn.offsetWidth - 40;
-            const maxY = cardRect.height - btn.offsetHeight - 20;
-            
-            const randomX = Math.random() * maxX - maxX / 2;
-            const randomY = Math.random() * maxY - maxY / 2;
-            
-            btn.style.position = 'absolute';
-            btn.style.left = `calc(50% + ${randomX}px)`;
-            btn.style.top = `calc(50% + ${randomY}px)`;
-            btn.style.transform = 'translate(-50%, -50%)';
-            btn.style.zIndex = '10';
-            
-            // Change text
-            btn.textContent = funnyTexts[runCount % funnyTexts.length];
+            btn.style.position = 'fixed';
+            btn.style.left = rx + 'px';
+            btn.style.top = ry + 'px';
+            btn.textContent = funnyWords[dodgeCount % funnyWords.length];
 
-            // After many attempts, make button tiny
-            if (runCount > 5) {
-                btn.style.fontSize = Math.max(8, 16 - runCount) + 'px';
-                btn.style.padding = `${Math.max(4, 14 - runCount)}px ${Math.max(10, 36 - runCount * 2)}px`;
-            }
-            if (runCount > 10) {
-                btn.style.opacity = Math.max(0.1, 1 - runCount * 0.08);
+            if (dodgeCount > 5) {
+                btn.style.transform = `scale(${Math.max(0.5, 1 - dodgeCount * 0.05)})`;
+                btn.style.opacity = Math.max(0.2, 1 - dodgeCount * 0.1);
             }
         }
 
-        // ========== Page 4: Result ==========
-        function goToPage4() {
-            showPage('page4');
-            
-            // Show date
-            const now = new Date();
-            const dateStr = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-            document.getElementById('resultDate').textContent = `💌 ${dateStr}`;
-            
-            // Trigger effects
-            createConfetti();
-            createFireworks();
-            startHearts();
+        function goToPage4() { show('page4'); }
+
+        // PAGE 5: FINAL
+        function winLove() {
+            show('page5');
+            document.getElementById('dateNow').textContent = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+            createCelebration();
         }
 
-        // ========== Hearts Background ==========
+        // VISUAL EFFECTS
         function startHearts() {
             const bg = document.getElementById('heartsBg');
-            const hearts = ['❤️', '💕', '💗', '💖', '💘', '💝', '🌸', '✨', '💫'];
-            
+            const symbols = ['❤️', '💖', '✨', '💕', '💗'];
             setInterval(() => {
-                const heart = document.createElement('span');
-                heart.className = 'heart-float';
-                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-                heart.style.left = Math.random() * 100 + '%';
-                heart.style.fontSize = (Math.random() * 20 + 14) + 'px';
-                heart.style.animationDuration = (Math.random() * 4 + 4) + 's';
-                heart.style.animationDelay = Math.random() * 2 + 's';
-                bg.appendChild(heart);
-                
-                setTimeout(() => heart.remove(), 10000);
-            }, 300);
+                const s = document.createElement('span');
+                s.className = 'heart-float';
+                s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                s.style.left = Math.random() * 100 + '%';
+                s.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                s.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                bg.appendChild(s);
+                setTimeout(() => s.remove(), 7000);
+            }, 400);
         }
 
-        // ========== Confetti ==========
-        function createConfetti() {
-            const colors = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff8e8e', '#ffc0cb', '#dda0dd'];
-            
-            for (let i = 0; i < 60; i++) {
-                setTimeout(() => {
-                    const piece = document.createElement('div');
-                    piece.className = 'confetti-piece';
-                    piece.style.left = Math.random() * 100 + '%';
-                    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    piece.style.width = (Math.random() * 8 + 4) + 'px';
-                    piece.style.height = (Math.random() * 8 + 4) + 'px';
-                    piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                    piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                    piece.style.animationDelay = Math.random() * 0.5 + 's';
-                    document.body.appendChild(piece);
-                    
-                    setTimeout(() => piece.remove(), 5000);
-                }, i * 50);
-            }
-        }
+        function createCelebration() {
+            const container = document.getElementById('fireworks-container');
+            const colors = ['#ff6b6b', '#ffd93d', '#ff8e8e', '#ffffff'];
 
-        // ========== Fireworks ==========
-        function createFireworks() {
-            const container = document.getElementById('fireworks');
-            const colors = ['#ff6b6b', '#ffd93d', '#ff8e8e', '#ffc0cb', '#ff69b4'];
-            
-            function burst(x, y) {
-                for (let i = 0; i < 20; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'firework-particle';
-                    particle.style.left = x + 'px';
-                    particle.style.top = y + 'px';
-                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    
-                    const angle = (Math.PI * 2 * i) / 20;
-                    const distance = Math.random() * 120 + 60;
-                    particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-                    particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
-                    
-                    container.appendChild(particle);
-                    setTimeout(() => particle.remove(), 1500);
+            function burst() {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                for (let i = 0; i < 30; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'firework-particle';
+                    p.style.left = x + 'px';
+                    p.style.top = y + 'px';
+                    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    const angle = (Math.PI * 2 * i) / 30;
+                    const dist = Math.random() * 150 + 50;
+                    p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                    p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+                    container.appendChild(p);
+                    setTimeout(() => p.remove(), 1200);
                 }
             }
-
-            // Multiple bursts
-            const positions = [
-                [window.innerWidth * 0.3, window.innerHeight * 0.3],
-                [window.innerWidth * 0.7, window.innerHeight * 0.2],
-                [window.innerWidth * 0.5, window.innerHeight * 0.4],
-                [window.innerWidth * 0.2, window.innerHeight * 0.5],
-                [window.innerWidth * 0.8, window.innerHeight * 0.45],
-            ];
-
-            positions.forEach(([x, y], i) => {
-                setTimeout(() => burst(x, y), i * 400);
-            });
-
-            // Repeat fireworks
-            setTimeout(() => createFireworks(), 4000);
+            setInterval(burst, 500);
         }
     </script>
 </body>
+
 </html>
+```
