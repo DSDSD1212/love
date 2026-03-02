@@ -372,6 +372,27 @@
     <div class="hearts-bg" id="heartsBg"></div>
     <div id="fireworks-container"></div>
 
+    <!-- Music Player -->
+    <div id="music-control" onclick="toggleMusic()"
+        style="position: fixed; top: 20px; right: 20px; z-index: 100; cursor: pointer; width: 40px; height: 40px; background: rgba(255,107,107,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--glass-border); animation: rotate 4s linear infinite; animation-play-state: paused;">
+        <span id="music-icon" style="font-size: 20px;">🎵</span>
+    </div>
+    <audio id="bgm" loop>
+        <source src="assets/music/bgm.mp3" type="audio/mpeg">
+    </audio>
+
+    <style>
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
     <!-- Page 1: Initial Hook -->
     <div class="page active" id="page1">
         <div class="glass-card">
@@ -410,25 +431,20 @@
             </p>
             <div class="memory-grid">
                 <div class="memory-item">
-                    <img src="/home/sds/.gemini/antigravity/brain/6c9a289c-40f6-4839-92e0-cde073d9d2c5/cute_love_candies_1772443765380.png"
-                        alt="记忆1">
+                    <img src="assets/images/cute_love_candies_1772443765380.png" alt="记忆1">
                     <div class="memory-caption">甜甜的心动</div>
                 </div>
                 <div class="memory-item">
-                    <img src="/home/sds/.gemini/antigravity/brain/6c9a289c-40f6-4839-92e0-cde073d9d2c5/aesthetic_flower_garden_pink_1772443785699.png"
-                        alt="记忆2">
+                    <img src="assets/images/aesthetic_flower_garden_pink_1772443785699.png" alt="记忆2">
                     <div class="memory-caption">想带你散步</div>
                 </div>
-                <!-- 预留失败占位 -->
-                <div class="memory-item"
-                    style="background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
-                    <span style="font-size: 24px;">✨</span>
-                    <div class="memory-caption">未完待续</div>
+                <div class="memory-item">
+                    <img src="assets/images/romantic_sunset_stroll_2_1772446601644.png" alt="记忆3">
+                    <div class="memory-caption">向往的远方</div>
                 </div>
-                <div class="memory-item"
-                    style="background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;">
-                    <span style="font-size: 24px;">🌙</span>
-                    <div class="memory-caption">全是你</div>
+                <div class="memory-item">
+                    <img src="assets/images/couple_under_starry_sky_2_1772446616116.png" alt="记忆4">
+                    <div class="memory-caption">星空下的誓言</div>
                 </div>
             </div>
             <button class="btn-primary" style="margin-top: 24px;" onclick="goToPage4()">下一步：确认情感逻辑</button>
@@ -479,6 +495,27 @@
         function show(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+
+            // Try auto-play on first transition if browser allows
+            const bgm = document.getElementById('bgm');
+            if (bgm.paused) {
+                bgm.play().then(() => {
+                    document.getElementById('music-control').style.animationPlayState = 'running';
+                }).catch(() => { /* Policy block, wait for interaction */ });
+            }
+        }
+
+        // MUSIC CONTROL
+        function toggleMusic() {
+            const bgm = document.getElementById('bgm');
+            const control = document.getElementById('music-control');
+            if (bgm.paused) {
+                bgm.play();
+                control.style.animationPlayState = 'running';
+            } else {
+                bgm.pause();
+                control.style.animationPlayState = 'paused';
+            }
         }
 
         // PAGE 2: LOADING SCRIPT
