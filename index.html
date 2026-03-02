@@ -247,43 +247,82 @@
             color: #4cd137;
         }
 
-        /* ========== Page 3: Memory Wall (NEW) ========== */
-        .memory-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 24px;
+        /* ========== Page 3: Memory Slider (REPLACED Grid) ========== */
+        .page-3-content {
+            width: 100%;
+            max-width: 460px;
         }
 
-        .memory-item {
-            aspect-ratio: 1;
-            border-radius: 16px;
+        .memory-slider-container {
+            width: 100%;
+            height: 320px;
+            position: relative;
+            margin-top: 24px;
+            border-radius: 20px;
             overflow: hidden;
             border: 1px solid var(--glass-border);
-            position: relative;
+            background: rgba(0, 0, 0, 0.2);
         }
 
-        .memory-item img {
+        .slider-img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .memory-item:hover img {
+            opacity: 0;
+            transition: opacity 1s ease-in-out, transform 1.5s ease;
             transform: scale(1.1);
         }
 
-        .memory-caption {
+        .slider-img.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .slider-caption {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 8px;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-            font-size: 11px;
-            color: white;
             text-align: center;
+            z-index: 2;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+            padding: 20px 10px 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.8s ease 0.3s;
+        }
+
+        .slider-img.active+.slider-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--primary);
+            width: 20px;
+            border-radius: 10px;
         }
 
         /* ========== Page 4: Quiz (NEW) ========== */
@@ -421,33 +460,28 @@
         </div>
     </div>
 
-    <!-- Page 3: Memory Wall -->
+    <!-- Page 3: Memory Slider -->
     <div class="page" id="page3">
-        <div class="glass-card" style="max-width: 460px;">
+        <div class="glass-card page-3-content">
             <div class="info-tag">📸 缓存数据恢复</div>
-            <div class="title-red">关联记忆已找回</div>
+            <div class="title-red">关联记忆展示中...</div>
             <p class="desc-text" style="margin-bottom: 20px;">
-                您在本地缓存中留下了大量与此人的关联。
+                正在通过时间锚点循环回溯关联记忆。
             </p>
-            <div class="memory-grid">
-                <div class="memory-item">
-                    <img src="assets/images/cute_love_candies_1772443765380.png" alt="记忆1">
-                    <div class="memory-caption">甜甜的心动</div>
-                </div>
-                <div class="memory-item">
-                    <img src="assets/images/aesthetic_flower_garden_pink_1772443785699.png" alt="记忆2">
-                    <div class="memory-caption">想带你散步</div>
-                </div>
-                <div class="memory-item">
-                    <img src="assets/images/romantic_sunset_stroll_2_1772446601644.png" alt="记忆3">
-                    <div class="memory-caption">向往的远方</div>
-                </div>
-                <div class="memory-item">
-                    <img src="assets/images/couple_under_starry_sky_2_1772446616116.png" alt="记忆4">
-                    <div class="memory-caption">星空下的誓言</div>
-                </div>
+
+            <div class="memory-slider-container" id="memorySlider">
+                <!-- Images injected by JS -->
             </div>
-            <button class="btn-primary" style="margin-top: 24px;" onclick="goToPage4()">下一步：确认情感逻辑</button>
+
+            <div class="slider-dots" id="sliderDots">
+                <!-- Dots injected by JS -->
+            </div>
+
+            <button id="btnNextMemory" class="btn-primary"
+                style="margin-top: 24px; opacity: 0; pointer-events: none; transition: all 0.5s ease; width: 100%;"
+                onclick="goToPage4()">
+                读取中... (0%)
+            </button>
         </div>
     </div>
 
@@ -549,7 +583,87 @@
                 }, i * 600);
             });
 
-            setTimeout(() => { show('page3'); startHearts(); }, steps.length * 600 + 800);
+            setTimeout(() => {
+                show('page3');
+                initSlider();
+                startHearts();
+            }, steps.length * 600 + 800);
+        }
+
+        // PAGE 3: DYNAMIC SLIDER
+        const memoryImgs = [
+            { src: 'assets/images/cute_love_candies_1772443765380.png', text: '甜甜的心动' },
+            { src: 'assets/images/aesthetic_flower_garden_pink_1772443785699.png', text: '想带你散步' },
+            { src: 'assets/images/romantic_sunset_stroll_2_1772446601644.png', text: '向往的远方' },
+            { src: 'assets/images/couple_under_starry_sky_2_1772446616116.png', text: '星空下的誓言' }
+        ];
+
+        let currentIdx = 0;
+        let sliderTimer = null;
+        let viewedIndices = new Set();
+
+        function initSlider() {
+            const container = document.getElementById('memorySlider');
+            const dots = document.getElementById('sliderDots');
+            const btnNext = document.getElementById('btnNextMemory');
+            if (!container || !dots) return;
+
+            container.innerHTML = '';
+            dots.innerHTML = '';
+            viewedIndices.clear();
+            viewedIndices.add(0); // First one viewed
+            updateNextButton();
+
+            memoryImgs.forEach((img, i) => {
+                const imgEl = document.createElement('img');
+                imgEl.src = img.src;
+                imgEl.className = 'slider-img' + (i === 0 ? ' active' : '');
+
+                const capEl = document.createElement('div');
+                capEl.className = 'slider-caption';
+                capEl.textContent = img.text;
+
+                container.appendChild(imgEl);
+                container.appendChild(capEl);
+
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (i === 0 ? ' active' : '');
+                dots.appendChild(dot);
+            });
+
+            if (sliderTimer) clearInterval(sliderTimer);
+            sliderTimer = setInterval(nextSlide, 3000);
+        }
+
+        function nextSlide() {
+            const imgs = document.querySelectorAll('.slider-img');
+            const dots = document.querySelectorAll('.dot');
+            if (!imgs.length) return;
+
+            imgs[currentIdx].classList.remove('active');
+            dots[currentIdx].classList.remove('active');
+
+            currentIdx = (currentIdx + 1) % memoryImgs.length;
+            viewedIndices.add(currentIdx);
+
+            imgs[currentIdx].classList.add('active');
+            dots[currentIdx].classList.add('active');
+
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const btn = document.getElementById('btnNextMemory');
+            const progress = Math.min(100, Math.floor((viewedIndices.size / memoryImgs.length) * 100));
+
+            if (viewedIndices.size >= memoryImgs.length) {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+                btn.textContent = '下一步：确认情感逻辑 →';
+                btn.style.boxShadow = '0 10px 20px rgba(255, 107, 107, 0.4)';
+            } else {
+                btn.textContent = `回忆同步中... (${progress}%)`;
+            }
         }
 
         // PAGE 4: DODGE BUTTON
