@@ -491,17 +491,27 @@
     </div>
 
     <script>
+        // GLOBAL INTERACTION FOR AUDIO
+        document.addEventListener('click', function () {
+            const bgm = document.getElementById('bgm');
+            if (bgm.paused) {
+                bgm.play().then(() => {
+                    document.getElementById('music-control').style.animationPlayState = 'running';
+                }).catch(e => console.log("Autoplay blocked by browser policy"));
+            }
+        }, { once: true });
+
         // NAVIGATION
         function show(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
 
-            // Try auto-play on first transition if browser allows
+            // Try play on transition (fallback)
             const bgm = document.getElementById('bgm');
             if (bgm.paused) {
                 bgm.play().then(() => {
                     document.getElementById('music-control').style.animationPlayState = 'running';
-                }).catch(() => { /* Policy block, wait for interaction */ });
+                }).catch(() => { });
             }
         }
 
@@ -615,4 +625,3 @@
 </body>
 
 </html>
-```
