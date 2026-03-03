@@ -526,14 +526,18 @@
 
     <script>
         // GLOBAL INTERACTION FOR AUDIO
-        document.addEventListener('click', function () {
+        function initAudio() {
             const bgm = document.getElementById('bgm');
             if (bgm.paused) {
                 bgm.play().then(() => {
                     document.getElementById('music-control').style.animationPlayState = 'running';
                 }).catch(e => console.log("Autoplay blocked by browser policy"));
             }
-        }, { once: true });
+            document.removeEventListener('click', initAudio);
+            document.removeEventListener('touchstart', initAudio);
+        }
+        document.addEventListener('click', initAudio, { once: true });
+        document.addEventListener('touchstart', initAudio, { once: true });
 
         // NAVIGATION
         function show(id) {
@@ -592,10 +596,10 @@
 
         // PAGE 3: DYNAMIC SLIDER
         const memoryImgs = [
-            { src: 'assets/images/cute_love_candies_1772443765380.png', text: '甜甜的心动' },
-            { src: 'assets/images/aesthetic_flower_garden_pink_1772443785699.png', text: '想带你散步' },
-            { src: 'assets/images/romantic_sunset_stroll_2_1772446601644.png', text: '向往的远方' },
-            { src: 'assets/images/couple_under_starry_sky_2_1772446616116.png', text: '星空下的誓言' }
+            { src: 'assets/images/cute_love_candies_1772443765380.webp', text: '甜甜的心动' },
+            { src: 'assets/images/aesthetic_flower_garden_pink_1772443785699.webp', text: '想带你散步' },
+            { src: 'assets/images/romantic_sunset_stroll_2_1772446601644.webp', text: '向往的远方' },
+            { src: 'assets/images/couple_under_starry_sky_2_1772446616116.webp', text: '星空下的誓言' }
         ];
 
         let currentIdx = 0;
