@@ -400,8 +400,15 @@
         }
 
         @keyframes confettiFall {
-            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
-            100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
         }
 
         .love-popup {
@@ -418,9 +425,20 @@
         }
 
         @keyframes lovePopup {
-            0% { opacity: 0; transform: scale(0.3) translateY(0); }
-            30% { opacity: 1; transform: scale(1.2) translateY(-20px); }
-            100% { opacity: 0; transform: scale(0.8) translateY(-80px); }
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(0);
+            }
+
+            30% {
+                opacity: 1;
+                transform: scale(1.2) translateY(-20px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(0.8) translateY(-80px);
+            }
         }
 
         .emoji-rain {
@@ -432,8 +450,15 @@
         }
 
         @keyframes emojiDrop {
-            0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
-            100% { opacity: 0; transform: translateY(100vh) rotate(360deg) scale(0.5); }
+            0% {
+                opacity: 1;
+                transform: translateY(-20px) rotate(0deg) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(360deg) scale(0.5);
+            }
         }
 
         /* Responsive */
@@ -702,18 +727,12 @@
         }
 
         // PAGE 3: DYNAMIC SLIDER
-        const memoryImgs = [
-            { src: 'assets/images/cute_love_candies_1772443765380.webp', text: '甜甜的心动' },
-            { src: 'assets/images/aesthetic_flower_garden_pink_1772443785699.webp', text: '想带你散步' },
-            { src: 'assets/images/romantic_sunset_stroll_2_1772446601644.webp', text: '向往的远方' },
-            { src: 'assets/images/couple_under_starry_sky_2_1772446616116.webp', text: '星空下的誓言' }
-        ];
-
+        let memoryImgs = [];
         let currentIdx = 0;
         let sliderTimer = null;
         let viewedIndices = new Set();
 
-        function initSlider() {
+        async function initSlider() {
             const container = document.getElementById('memorySlider');
             const dots = document.getElementById('sliderDots');
             const btnNext = document.getElementById('btnNextMemory');
@@ -722,13 +741,44 @@
             container.innerHTML = '';
             dots.innerHTML = '';
             viewedIndices.clear();
-            viewedIndices.add(0); // First one viewed
+
+            // T004: 获取图片配置
+            try {
+                const response = await fetch('assets/images/images.json');
+                if (!response.ok) throw new Error('Network response was not ok');
+                memoryImgs = await response.json();
+            } catch (error) {
+                console.error("Failed to load images:", error);
+                // Fallback T006
+                container.innerHTML = '<div style="color:white; padding: 20px;">图片加载失败，请检查配置文件。</div>';
+                btnNext.style.opacity = '1';
+                btnNext.style.pointerEvents = 'auto';
+                btnNext.textContent = '下一步：确认情感逻辑 →';
+                return;
+            }
+
+            if (memoryImgs.length === 0) {
+                container.innerHTML = '<div style="color:white; padding: 20px;">暂无图片可展示。</div>';
+                btnNext.style.opacity = '1';
+                btnNext.style.pointerEvents = 'auto';
+                btnNext.textContent = '下一步：确认情感逻辑 →';
+                return;
+            }
+
+            viewedIndices.add(0); // 第一个被看到
             updateNextButton();
 
+            // T005: 动态渲染
             memoryImgs.forEach((img, i) => {
                 const imgEl = document.createElement('img');
                 imgEl.src = img.src;
                 imgEl.className = 'slider-img' + (i === 0 ? ' active' : '');
+
+                // 为了保证找不到图片时也能优雅降级
+                imgEl.onerror = function () {
+                    this.src = '';
+                    this.alt = '图片加载失败';
+                };
 
                 const capEl = document.createElement('div');
                 capEl.className = 'slider-caption';
